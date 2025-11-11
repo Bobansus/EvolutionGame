@@ -9,13 +9,16 @@ public class Player : MonoBehaviour
     public float jumpVelocity;
     public float feetThreshold = 0.45F;
     public float airControl = 0.5F;
+    public int groundDecayTicks = 10;
 
     [NonSerialized] public Vector2 rawInput;
     [NonSerialized] public bool onGround;
+    [NonSerialized] public bool effectiveOnGround;
 
     private Rigidbody2D rb;
     private CircleCollider2D col;
     private List<ContactPoint2D> contactPoints = new();
+    private int groundTimer;
 
     private void OnCollisionEnter2D(Collision2D _)
     {
@@ -38,6 +41,8 @@ public class Player : MonoBehaviour
                 newOnGround = true;
         }
 
+        if (onGround && !newOnGround) groundTimer = groundDecayTicks;
+        else effectiveOnGround = newOnGround;
         onGround = newOnGround;
     }
 
@@ -67,10 +72,16 @@ public class Player : MonoBehaviour
     {
         Vector2 vel = rb.velocity;
         float speed = movementSpeed;
-        if (!onGround) speed *= airControl;
-        vel.x += rawInput.x * speed;
-        if (onGround && rawInput.y > 0 && vel.y < jumpVelocity)
+        if (!effectiveOnGround) speed *= airControl;
+        vel.x = rawInput.x * speed;
+        if (effectiveOnGround && rawInput.y > 0 && vel.y < jumpVelocity)
+        {
             vel.y = jumpVelocity;
+            effectiveOnGround = false;
+        }
+
+        if (groundTimer > 0 && --groundTimer <= 0) effectiveOnGround = onGround;
+
         rb.velocity = vel;
     }
 }

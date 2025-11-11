@@ -52,7 +52,7 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 255899061c055a148890477e5b240173, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -110,10 +110,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92934d4668b1aa2459eefcfad6c40518, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 0.2
+  movementSpeed: 4
   jumpVelocity: 4
   feetThreshold: 0.45
-  airControl: 0.5
+  airControl: 1
+  groundDecayTicks: 10
 --- !u!114 &5500836757802609067
 MonoBehaviour:
   m_ObjectHideFlags: 0
