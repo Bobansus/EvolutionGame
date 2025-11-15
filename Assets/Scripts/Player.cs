@@ -7,7 +7,7 @@ public class Player : MonoBehaviour
 {
     public float movementSpeed;
     public float jumpVelocity;
-    public float feetThreshold = 0.45F;
+    [Range(0.0f, 180.0f)] public float groundAngleThreshold = 60.0F;
     public float airControl = 0.5F;
     public int groundDecayTicks = 10;
 
@@ -16,7 +16,7 @@ public class Player : MonoBehaviour
     [NonSerialized] public bool effectiveOnGround;
 
     private Rigidbody2D rb;
-    private CircleCollider2D col;
+    private BoxCollider2D col;
     private List<ContactPoint2D> contactPoints = new();
     private int groundTimer;
 
@@ -36,8 +36,8 @@ public class Player : MonoBehaviour
         var newOnGround = false;
         foreach (ContactPoint2D point in contactPoints)
         {
-            Vector2 pos = point.point;
-            if (pos.y < transform.position.y + col.offset.y - col.radius + Mathf.Lerp(0, col.radius * 2, feetThreshold))
+            Debug.Log(Math.Abs(Vector2.SignedAngle(point.normal, Vector2.up)) + " " + groundAngleThreshold);
+            if (Math.Abs(Vector2.SignedAngle(point.normal, Vector2.up)) <= groundAngleThreshold)
                 newOnGround = true;
         }
 
@@ -48,19 +48,29 @@ public class Player : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        var c = GetComponent<CircleCollider2D>();
+        var c = GetComponent<BoxCollider2D>();
         if (c is null) return;
-        float y = transform.position.y + c.offset.y - c.radius + Mathf.Lerp(0, c.radius * 2, feetThreshold);
-        var start = new Vector2(transform.position.x - 0.5F, y);
-        var end = new Vector2(transform.position.x + 0.5F, y);
+        var start = new Vector2(transform.position.x, transform.position.y);
+        float rad = groundAngleThreshold * Mathf.Deg2Rad;
+        var end1 = new Vector2(transform.position.x - Mathf.Sin(rad), transform.position.y + Mathf.Cos(rad));
+        var end2 = new Vector2(transform.position.x - Mathf.Sin(-rad), transform.position.y + Mathf.Cos(-rad));
         Gizmos.color = Color.blue;
-        Gizmos.DrawLine(start, end);
+        Gizmos.DrawLine(start, end1);
+        Gizmos.DrawLine(start, end2);
+    }
+
+    public static Vector2 rotate(Vector2 v, float delta)
+    {
+        return new Vector2(
+            v.x * Mathf.Cos(delta) - v.y * Mathf.Sin(delta),
+            v.x * Mathf.Sin(delta) + v.y * Mathf.Cos(delta)
+        );
     }
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        col = GetComponent<CircleCollider2D>();
+        col = GetComponent<BoxCollider2D>();
     }
 
     public void Move(InputAction.CallbackContext context)
