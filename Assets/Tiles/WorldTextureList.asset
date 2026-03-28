@@ -15,6 +15,4 @@ MonoBehaviour:
   entries:
   - texture: {fileID: 2800000, guid: ad402cb5f72496c459df2b52edb0ba44, type: 3}
   - texture: {fileID: 2800000, guid: 2902bb671d32a254ca2093c0d795e986, type: 3}
-  - texture: {fileID: 2800000, guid: 8001d1f5c3539d14081dcc7e84059923, type: 3}
-  - texture: {fileID: 2800000, guid: a671901264153494ea827c0255d8c77c, type: 3}
-  - texture: {fileID: 2800000, guid: 2b97eb4244bc43b4787b4b521f03ab15, type: 3}
+  - texture: {fileID: 2800000, guid: 86bf150f63d20da4f87608818bec2c30, type: 3}
